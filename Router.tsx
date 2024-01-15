@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -6,14 +6,22 @@ import { RouteButtons } from './src/pages/dev';
 import { HomePage } from './src/pages/homepage';
 import { AboutUs } from './src/pages/about';
 import { PageNotFound } from './src/pages/404';
+import { Profile } from './src/pages/profile';
 
-export const routeNames = ['Home', 'About', 'NotFound', 'Dev'] as const;
+export const routeNames = [
+    'Home',
+    'About',
+    'NotFound',
+    'Dev',
+    'Profile',
+] as const;
 
 export type RootStackParamList = {
     Home: undefined;
     About: undefined;
     NotFound: undefined;
     Dev: undefined;
+    Profile: undefined;
     // Add other screens and their parameter types as needed
 };
 
@@ -33,6 +41,7 @@ const Router: React.FC = () => {
                 <Stack.Screen name="About" component={AboutUs} />
                 <Stack.Screen name="NotFound" component={PageNotFound} />
                 <Stack.Screen name="Dev" component={RouteButtons} />
+                <Stack.Screen name="Profile" component={Profile} />
             </Stack.Navigator>
         </NavigationContainer>
     );

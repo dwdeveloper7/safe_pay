@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Badge from '../../../components/badge';
 import {
     AntDesign,
@@ -10,6 +11,7 @@ import {
 } from '@expo/vector-icons';
 
 const BottomNavigationBar = () => {
+    const navigation = useNavigation();
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.tab}>
@@ -29,13 +31,16 @@ const BottomNavigationBar = () => {
                 <Text style={styles.label}>Notifications</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.tab}>
+            <TouchableOpacity
+                style={styles.tab}
+                onPress={() => navigation.navigate('Profile')}
+            >
                 <MaterialIcons name="account-circle" size={24} color="black" />
                 <Text style={styles.label}>Profile</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.tab}>
-                <Octicons name="question" size={24} color="black" />
+                <Octicons name="question" size={24} color="gray" />
                 <Text style={styles.label}>Help</Text>
             </TouchableOpacity>
         </View>
