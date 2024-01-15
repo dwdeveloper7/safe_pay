@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import BottomNavigationBar from './src/pages/homepage/components/BottomNavigationBar';
 import { RouteButtons } from './src/pages/dev';
 import { HomePage } from './src/pages/homepage';
 import { AboutUs } from './src/pages/about';
 import { PageNotFound } from './src/pages/404';
 import { Profile } from './src/pages/profile';
+import { Transactions } from './src/pages/transactions';
 
 export const routeNames = [
     'Home',
@@ -14,6 +15,7 @@ export const routeNames = [
     'NotFound',
     'Dev',
     'Profile',
+    'Transactions',
 ] as const;
 
 export type RootStackParamList = {
@@ -22,6 +24,7 @@ export type RootStackParamList = {
     NotFound: undefined;
     Dev: undefined;
     Profile: undefined;
+    Transactions: undefined;
     // Add other screens and their parameter types as needed
 };
 
@@ -42,7 +45,9 @@ const Router: React.FC = () => {
                 <Stack.Screen name="NotFound" component={PageNotFound} />
                 <Stack.Screen name="Dev" component={RouteButtons} />
                 <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Transactions" component={Transactions} />
             </Stack.Navigator>
+            <BottomNavigationBar />
         </NavigationContainer>
     );
 };

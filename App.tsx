@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import AppContainerStyles from './AppContainerStyles';
 import Router from './Router';
+import BottomNavigationBar from './src/pages/homepage/components/BottomNavigationBar';
 
 export default function App() {
     return (

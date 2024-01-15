@@ -1,6 +1,6 @@
 import React from 'react';
 import TopNav from './TopNav';
-import BottomNavigationBar from './BotttomNavigationBar';
+import BottomNavigationBar from './BottomNavigationBar';
 import { View, Text, Image, StyleSheet } from 'react-native';
 const homeImage = require('../../../../assets/images/header_final.png');
 const homeFooterImage = require('../../../../assets/images/footer_final.png');
@@ -55,7 +55,6 @@ const HomePage: React.FC = () => {
                     style={{ width: '100%', height: 144 }}
                 />
             </View>
-            <BottomNavigationBar />
         </View>
     );
 };
