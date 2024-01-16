@@ -22,7 +22,7 @@ const icons = [
     },
     {
         icon: (
-            <Badge value="88">
+            <Badge value="1">
                 <Ionicons name="notifications" size={24} color="black" />
             </Badge>
         ),
@@ -78,12 +78,13 @@ const BottomNavigationBar = () => {
         <View style={styles.container}>
             {icons.map((icon, index) => (
                 <TouchableOpacity
-                    key={index}
+                    key={icon.label}
                     style={[
                         styles.iconContainer,
                         isActive(icon.label) && styles.activeLabel,
                     ]}
                     onPress={() => handleIconPress(icon.label)}
+                    accessibilityLabel={`Navigate to ${icon.label}`}
                 >
                     {React.cloneElement(icon.icon, {
                         color: isActive(icon.label) ? 'blue' : 'black',

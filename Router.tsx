@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import BottomNavigationBar from './src/pages/homepage/components/BottomNavigationBar';
 import { RouteButtons } from './src/pages/dev';
@@ -28,6 +28,8 @@ export type RootStackParamList = {
     // Add other screens and their parameter types as needed
 };
 
+export type AppRoutes = keyof RootStackParamList;
+
 declare global {
     namespace ReactNavigation {
         interface RootParamList extends RootStackParamList {}
@@ -39,13 +41,37 @@ const Stack = createStackNavigator<RootStackParamList>();
 const Router: React.FC = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Dev">
-                <Stack.Screen name="Home" component={HomePage} />
-                <Stack.Screen name="About" component={AboutUs} />
-                <Stack.Screen name="NotFound" component={PageNotFound} />
-                <Stack.Screen name="Dev" component={RouteButtons} />
-                <Stack.Screen name="Profile" component={Profile} />
-                <Stack.Screen name="Transactions" component={Transactions} />
+            <Stack.Navigator initialRouteName="Transactions">
+                <Stack.Screen
+                    name="Home"
+                    component={HomePage}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="About"
+                    component={AboutUs}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="NotFound"
+                    component={PageNotFound}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Dev"
+                    component={RouteButtons}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Profile"
+                    component={Profile}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="Transactions"
+                    component={Transactions}
+                    options={{ headerShown: false }}
+                />
             </Stack.Navigator>
             <BottomNavigationBar />
         </NavigationContainer>

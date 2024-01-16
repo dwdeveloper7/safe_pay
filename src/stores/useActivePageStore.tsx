@@ -1,13 +1,14 @@
 import { create } from 'zustand';
+import { type AppRoutes } from '../../Router';
 
 interface ActivePageStore {
-    activePage: string;
+    activePage: AppRoutes;
     setActivePage: (pageName: string) => void;
 }
 
 const useActivePageStore = create<ActivePageStore>(set => ({
-    activePage: 'Home',
-    setActivePage: pageName => {
+    activePage: 'Transactions',
+    setActivePage: (pageName: AppRoutes) => {
         set({ activePage: pageName });
     },
 }));

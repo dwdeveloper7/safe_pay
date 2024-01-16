@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import useAmountStore from '../../../stores/useAmountStore';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import SendMoneyModal from './SendMoneyModal';
 
 const PaymentPage = () => {
     const { amount, setAmount, backspace } = useAmountStore();
@@ -30,22 +31,26 @@ const PaymentPage = () => {
 
     const handleSendMoney = () => {
         // Logic for sending money to escrow
+        toggleModal();
     };
 
     const handleRequestMoney = () => {
         // Logic for requesting money for a transaction
     };
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible);
+    };
+
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Enter Amount</Text>
-
             <View style={styles.amountContainer}>
                 <Text style={styles.currencySymbol}>$</Text>
                 <Text style={styles.amountText}>{amount}</Text>
             </View>
 
-            <Text style={styles.label}>Select Currency:</Text>
             <Picker
                 selectedValue={currency}
                 style={styles.picker}
@@ -89,6 +94,12 @@ const PaymentPage = () => {
                     <Text style={styles.buttonText}>Secure Request</Text>
                 </TouchableOpacity>
             </View>
+
+            <SendMoneyModal
+                isVisible={isModalVisible}
+                onClose={toggleModal}
+                onSend={() => alert('Sent')}
+            />
         </View>
     );
 };
@@ -99,23 +110,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
-    },
-    header: {
-        fontSize: 24,
-        marginBottom: 20,
+        backgroundColor: '#007bff',
     },
     amountContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-    },
-    amountLabel: {
-        fontSize: 18,
-        marginRight: 10,
+        width: '100%',
+        maxWidth: 300,
+        height: 50,
     },
     amount: {
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    amountText: {
+        fontSize: 42,
+        marginLeft: 5,
+        color: 'white',
+        fontFamily: 'Inter-Bold',
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -124,14 +137,15 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     button: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#4da1ff',
         paddingVertical: 15,
         paddingHorizontal: 15,
         borderRadius: 5,
     },
     buttonText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 14,
+        fontFamily: 'Inter-Bold',
     },
     clearButton: {
         marginLeft: 'auto',
@@ -144,23 +158,22 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     currencySymbol: {
-        fontSize: 20,
+        fontSize: 24,
+        color: 'white',
+        fontFamily: 'Inter-Bold',
     },
     digit: {
         width: '30%',
         marginVertical: 5,
-        backgroundColor: '#f0f0f0',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 15,
         borderRadius: 5,
     },
     digitText: {
-        fontSize: 20,
-    },
-    amountText: {
         fontSize: 24,
-        marginLeft: 5,
+        color: 'white',
+        fontFamily: 'Inter-Bold',
     },
     label: {
         alignSelf: 'flex-start',
@@ -169,25 +182,7 @@ const styles = StyleSheet.create({
     picker: {
         width: '100%',
         marginBottom: 20,
-    },
-    dialPad: {
-        width: 220, // Adjust the width of the dial pad
-    },
-    dialRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
-    },
-    digitButton: {
-        width: 60,
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'lightgray',
-        borderRadius: 30,
-    },
-    digitButtonText: {
-        fontSize: 24,
+        fontFamily: 'Inter-Bold',
     },
     keypad: {
         flexDirection: 'row',
