@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useAmountStore from '../../../stores/useAmountStore';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
 import { Picker } from '@react-native-picker/picker';
 import SendMoneyModal from './SendMoneyModal';
 
@@ -8,6 +9,22 @@ const PaymentPage = () => {
     const { amount, setAmount, backspace } = useAmountStore();
 
     const [currency, setCurrency] = useState('USD'); // Default currency
+
+    const apiUrl = 'http://192.168.0.187:8080/api/v1';
+
+    const fetchTransactions = async () => {
+        try {
+            const response = await fetch(`${apiUrl}/users/1`);
+            return response.json();
+        } catch (error) {
+            throw new Error('Network response error');
+        }
+    };
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ['myQueryKey'],
+        queryFn: fetchTransactions,
+    });
 
     const handleInput = num => {
         setAmount(amount + num);
@@ -29,6 +46,29 @@ const PaymentPage = () => {
         return digits;
     };
 
+    const formatAmount = () => {
+        // Separate the text into two parts: before and after the decimal point
+        let [integerPart, decimalPart] = amount.split('.');
+
+        // Remove non-numeric characters from the integer part
+        integerPart = integerPart.replace(/[^0-9]/g, '');
+
+        // Format the integer part with commas
+        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+        // Reassemble the integer and decimal parts
+        let formattedAmount = integerPart;
+        if (decimalPart !== undefined) {
+            // Limit the decimal part to 2 digits (optional, for standard currency format)
+            decimalPart = decimalPart.substring(0, 2);
+
+            // Append the decimal part back
+            formattedAmount += '.' + decimalPart;
+        }
+
+        return formattedAmount;
+    };
+
     const handleSendMoney = () => {
         // Logic for sending money to escrow
         toggleModal();
@@ -48,7 +88,7 @@ const PaymentPage = () => {
         <View style={styles.container}>
             <View style={styles.amountContainer}>
                 <Text style={styles.currencySymbol}>$</Text>
-                <Text style={styles.amountText}>{amount}</Text>
+                <Text style={styles.amountText}>{formatAmount()}</Text>
             </View>
 
             <Picker

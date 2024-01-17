@@ -36,3 +36,6 @@ yarn-error.*
 
 # package.lock.json, use YARN!
 package-lock.json
+
+#back-end dir
+backend/

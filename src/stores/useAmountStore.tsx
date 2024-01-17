@@ -29,6 +29,9 @@ const useAmountStore = create<AmountStore>(set => ({
             else {
                 updatedAmount = newAmount;
             }
+            if (parseFloat(updatedAmount) > 50000) {
+                return { amount: state.amount };
+            }
 
             return { amount: updatedAmount };
         }),
