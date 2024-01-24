@@ -1,15 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import { createClient } from '@supabase/supabase-js';
 import TopNav from './TopNav';
 import BottomNavigationBar from './BottomNavigationBar';
-import { View, Text, Image, StyleSheet } from 'react-native';
+
+import SignupForm from '../../signup/Signup';
+import VerifyCode from '../../signup/VerifyOTPCode';
+import LoginComponent from '../../login/components/Login';
+
 const homeImage = require('../../../../assets/images/header_final.png');
 const homeFooterImage = require('../../../../assets/images/footer_final.png');
 
 const styles = StyleSheet.create({
     container: {
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         height: '100%',
-        backgroundColor: '#FEF6E5',
+        backgroundColor: 'white',
         flex: 1,
     },
     upperContainer: {
@@ -31,32 +37,12 @@ const styles = StyleSheet.create({
     },
 });
 
-const HomePage: React.FC = () => {
-    return (
-        <View style={styles.container}>
-            {/* <TopNav /> */}
-            <View style={styles.upperContainer}>
-                <Image
-                    source={homeImage}
-                    style={{ width: '100%', height: 155 }}
-                />
-            </View>
-            {/* <View style={styles.middleContainer}>
-                <Text style={styles.headerText}>Peace Pay</Text>
-            </View> */}
-
-            <View style={styles.middleContainer}>
-                <Text>main content</Text>
-            </View>
-
-            <View style={styles.bottomContainer}>
-                <Image
-                    source={homeFooterImage}
-                    style={{ width: '100%', height: 144 }}
-                />
-            </View>
-        </View>
-    );
-};
+const HomePage: React.FC = () => (
+    <View style={styles.container}>
+        {/* <SignupForm /> */}
+        {/* <VerifyCode /> */}
+        <Text>Hi</Text>
+    </View>
+);
 
 export default HomePage;

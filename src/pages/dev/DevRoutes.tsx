@@ -2,7 +2,10 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { type RootStackParamList, routeNames } from '../../../Router';
+import {
+    type RootStackParamList,
+    routeNames,
+} from '../../../router/RouterStacks';
 
 const styles = StyleSheet.create({
     container: {

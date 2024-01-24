@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const BottomNavigationBar = () => {
+const BottomNavigationBar: React.FC<{ visible: boolean }> = ({ visible }) => {
     const { activePage, setActivePage } = useActivePageStore();
     const navigation = useNavigation();
 
@@ -73,6 +73,8 @@ const BottomNavigationBar = () => {
     };
 
     const isActive = pageName => pageName === activePage;
+
+    if (!visible) return null;
 
     return (
         <View style={styles.container}>

@@ -1,30 +1,30 @@
 import React, { useState } from 'react';
-import useAmountStore from '../../../stores/useAmountStore';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { Picker } from '@react-native-picker/picker';
+import useAmountStore from '../../../stores/useAmountStore';
 import SendMoneyModal from './SendMoneyModal';
 
-const PaymentPage = () => {
+function PaymentPage() {
     const { amount, setAmount, backspace } = useAmountStore();
 
     const [currency, setCurrency] = useState('USD'); // Default currency
 
     const apiUrl = 'http://192.168.0.187:8080/api/v1';
 
-    const fetchTransactions = async () => {
-        try {
-            const response = await fetch(`${apiUrl}/users/1`);
-            return response.json();
-        } catch (error) {
-            throw new Error('Network response error');
-        }
-    };
+    // const fetchTransactions = async () => {
+    //     try {
+    //         const response = await fetch(`${apiUrl}/users/1`);
+    //         return response.json();
+    //     } catch (error) {
+    //         throw new Error('Network response error');
+    //     }
+    // };
 
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ['myQueryKey'],
-        queryFn: fetchTransactions,
-    });
+    // const { data, isLoading, isError } = useQuery({
+    //     queryKey: ['myQueryKey'],
+    //     queryFn: fetchTransactions,
+    // });
 
     const handleInput = num => {
         setAmount(amount + num);
@@ -63,7 +63,7 @@ const PaymentPage = () => {
             decimalPart = decimalPart.substring(0, 2);
 
             // Append the decimal part back
-            formattedAmount += '.' + decimalPart;
+            formattedAmount += `.${decimalPart}`;
         }
 
         return formattedAmount;
@@ -90,17 +90,6 @@ const PaymentPage = () => {
                 <Text style={styles.currencySymbol}>$</Text>
                 <Text style={styles.amountText}>{formatAmount()}</Text>
             </View>
-
-            <Picker
-                selectedValue={currency}
-                style={styles.picker}
-                onValueChange={itemValue => setCurrency(itemValue)}
-            >
-                <Picker.Item label="USD" value="USD" />
-                <Picker.Item label="EUR" value="EUR" />
-                <Picker.Item label="GBP" value="GBP" />
-                {/* Add more currency options as needed */}
-            </Picker>
 
             <View style={styles.keypad}>
                 {createDigits()}
@@ -142,30 +131,30 @@ const PaymentPage = () => {
             />
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
         padding: 20,
         backgroundColor: '#007bff',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
     amountContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
         width: '100%',
-        maxWidth: 300,
-        height: 50,
+        justifyContent: 'center',
+        height: 100,
     },
     amount: {
         fontSize: 18,
         fontWeight: 'bold',
     },
     amountText: {
-        fontSize: 42,
+        fontSize: 50,
         marginLeft: 5,
         color: 'white',
         fontFamily: 'Inter-Bold',
@@ -173,14 +162,16 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        width: '100%',
+        width: 300,
         paddingBottom: 20,
     },
     button: {
         backgroundColor: '#4da1ff',
-        paddingVertical: 15,
-        paddingHorizontal: 15,
+        width: 130,
+        height: 50,
         borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     buttonText: {
         color: 'white',
@@ -211,7 +202,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     digitText: {
-        fontSize: 24,
+        fontSize: 28,
         color: 'white',
         fontFamily: 'Inter-Bold',
     },
@@ -230,7 +221,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         maxWidth: 300,
-        marginBottom: 20,
     },
 });
 

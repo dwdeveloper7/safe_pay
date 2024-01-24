@@ -1,10 +1,10 @@
 import { create } from 'zustand';
-import { type AppRoutes } from '../../Router';
+import { type AppRoutes } from '../../router/RouterStacks';
 
-interface ActivePageStore {
+type ActivePageStore = {
     activePage: AppRoutes;
     setActivePage: (pageName: string) => void;
-}
+};
 
 const useActivePageStore = create<ActivePageStore>(set => ({
     activePage: 'Transactions',

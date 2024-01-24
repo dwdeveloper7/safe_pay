@@ -10,7 +10,9 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { AntDesign } from '@expo/vector-icons';
 
-const SendMoneyModal = ({ isVisible, onClose, onSend }) => {
+import PeopleSearch from '../../../components/peopleSearch';
+
+function SendMoneyModal({ isVisible, onClose, onSend }) {
     const [recipient, setRecipient] = useState('');
     const [subject, setSubject] = useState('');
 
@@ -25,32 +27,17 @@ const SendMoneyModal = ({ isVisible, onClose, onSend }) => {
     return (
         <Modal
             animationType="slide"
-            transparent={true}
+            transparent
             visible={isVisible}
             onRequestClose={onClose}
             style={{ margin: 0 }}
         >
             <View style={styles.modalView}>
-                <Text style={styles.modalText}>Send Money</Text>
-
                 <TouchableOpacity style={styles.closeButton} onPress={onClose}>
                     <AntDesign name="closecircleo" size={24} color="black" />
                 </TouchableOpacity>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Recipient"
-                    value={recipient}
-                    onChangeText={setRecipient}
-                />
-
-                <TextInput
-                    style={styles.input}
-                    placeholder="Subject"
-                    value={subject}
-                    onChangeText={setSubject}
-                />
-
+                {/* 
                 <Picker
                     selectedValue={selectedTransaction}
                     style={styles.picker}
@@ -65,15 +52,13 @@ const SendMoneyModal = ({ isVisible, onClose, onSend }) => {
                             value={transaction.id}
                         />
                     ))}
-                </Picker>
+                </Picker> */}
 
-                <TouchableOpacity style={styles.button} onPress={handleSend}>
-                    <Text style={styles.buttonText}>Secure Pay</Text>
-                </TouchableOpacity>
+                <PeopleSearch />
             </View>
         </Modal>
     );
-};
+}
 
 const styles = StyleSheet.create({
     closeButton: {
@@ -84,7 +69,6 @@ const styles = StyleSheet.create({
     modalView: {
         backgroundColor: 'white',
         borderRadius: 20,
-        padding: 35,
         alignItems: 'center',
         shadowColor: '#000',
         shadowOffset: {

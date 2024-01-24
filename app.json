@@ -30,7 +30,8 @@
                         "fonts": ["./assets/fonts/Inter-Bold.otf"]
                     }
                 ]
-            ]
+            ],
+            "jsEngine": "jsc"
         },
         "web": {
             "favicon": "./assets/favicon.png"

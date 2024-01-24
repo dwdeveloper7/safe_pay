@@ -1,47 +1,51 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+
 import { View, Text, StyleSheet } from 'react-native';
+import PageHeader from './components/PageHeader';
+import Button from '../../components/Button';
+import Spinner from '../../components/spinner';
+import supabase from '../../../lib/supabase';
+import { useNavigation } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
-    text: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    subtext: {
-        fontSize: 16,
-        marginTop: 10,
+    buttonContainer: {
+        marginLeft: 20,
+        backgroundColor: 'white',
     },
 });
 
 const Profile: React.FC = () => {
-    const apiUrl = 'http:/192.168.0.187:8080/api/v1';
+    const navigation = useNavigation();
+    const [isSigningOut, setIsSigningOut] = useState(false);
 
-    const fetchTransactions = async () => {
-        try {
-            const response = await fetch(`${apiUrl}/users/1`);
-            return response.json();
-        } catch (error) {
-            throw new Error('Network response error');
+    const handleSignout = async () => {
+        setIsSigningOut(true); // Indicate that sign-out is in progress
+
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            console.error('Logout failed:', error.message);
+            setIsSigningOut(false);
+            return;
         }
+
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+        });
     };
 
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ['myQueryKey'],
-        queryFn: fetchTransactions,
-    });
-    if (isLoading || !data) {
-        return <Text>loading</Text>;
-    }
+    if (isSigningOut) return <Spinner />;
+
     return (
         <View style={styles.container}>
-            <Text style={styles.subtext}>
-                Welcome to Profile Page {data.data.username}
-            </Text>
+            <PageHeader />
+            <View style={styles.buttonContainer}>
+                <Button title={'Logout'} onPress={handleSignout} size="LG" />
+            </View>
         </View>
     );
 };
