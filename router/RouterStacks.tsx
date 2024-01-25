@@ -1,6 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import BottomNavigationBar from '../src/pages/homepage/components/BottomNavigationBar';
-import { RouteButtons } from '../src/pages/dev';
+
 import { HomePage } from '../src/pages/homepage';
 import { AboutUs } from '../src/pages/about';
 import { PageNotFound } from '../src/pages/404';
@@ -13,7 +13,6 @@ export const routeNames = [
     'Home',
     'About',
     'NotFound',
-    'Dev',
     'Profile',
     'Transactions',
     'SignIn',
@@ -40,9 +39,9 @@ declare global {
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const RouterStacks: React.FC = () => (
+const RouterStacks = () => (
     <>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator initialRouteName="Profile">
             <Stack.Screen
                 name="Home"
                 component={HomePage}
@@ -58,11 +57,7 @@ const RouterStacks: React.FC = () => (
                 component={PageNotFound}
                 options={{ headerShown: false }}
             />
-            <Stack.Screen
-                name="Dev"
-                component={RouteButtons}
-                options={{ headerShown: false }}
-            />
+
             <Stack.Screen
                 name="Profile"
                 component={Profile}

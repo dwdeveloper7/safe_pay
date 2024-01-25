@@ -7,19 +7,24 @@ import Spinner from '../../components/spinner';
 import supabase from '../../../lib/supabase';
 import { useNavigation } from '@react-navigation/native';
 
+import { AddPaymentMethod } from './components/AddPaymentMethod';
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     buttonContainer: {
-        marginLeft: 20,
-        backgroundColor: 'white',
+        // marginLeft: 20,
+        // backgroundColor: 'white',
+        // marginTop: 20,
     },
 });
 
 const Profile: React.FC = () => {
     const navigation = useNavigation();
     const [isSigningOut, setIsSigningOut] = useState(false);
+
+    const [addCardOpen, setAddCardOpen] = useState(false);
 
     const handleSignout = async () => {
         setIsSigningOut(true); // Indicate that sign-out is in progress
@@ -40,12 +45,32 @@ const Profile: React.FC = () => {
 
     if (isSigningOut) return <Spinner />;
 
+    const toggleAddCard = () => {
+        setAddCardOpen(!addCardOpen);
+    };
+
     return (
         <View style={styles.container}>
-            <PageHeader />
-            <View style={styles.buttonContainer}>
-                <Button title={'Logout'} onPress={handleSignout} size="LG" />
-            </View>
+            <PageHeader>
+                <View style={styles.buttonContainer}>
+                    <Button
+                        title="Add Card"
+                        onPress={toggleAddCard}
+                        size="medium"
+                    />
+
+                    <Button
+                        title="Logout"
+                        onPress={handleSignout}
+                        size="large"
+                    />
+                </View>
+
+                <AddPaymentMethod
+                    onClose={toggleAddCard}
+                    visible={addCardOpen}
+                />
+            </PageHeader>
         </View>
     );
 };

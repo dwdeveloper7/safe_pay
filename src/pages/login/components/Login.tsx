@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import useLoadingStore from '../../../stores/useLoadingStore';
 import { View, TextInput, Text, Pressable, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -80,6 +81,8 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     } = useForm();
     const { isLoading, setLoading } = useLoadingStore();
 
+    const [loginError, setLoginError] = useState('');
+
     const onSubmit = async (loginData: { phone: string }) => {
         const { phone } = loginData;
         const formattedNumber = formatToE164(1, phone);
@@ -91,7 +94,7 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
             onSuccess();
         } catch (error) {
             setLoading(false);
-            console.error('Login error', error);
+            setLoginError(error.message);
         }
     };
 
@@ -127,6 +130,10 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
                     <Text style={styles.errorText}>
                         Enter a valid email or phone number.
                     </Text>
+                )}
+
+                {loginError !== '' && (
+                    <Text style={styles.errorText}>{loginError}</Text>
                 )}
 
                 {/* Login Button */}

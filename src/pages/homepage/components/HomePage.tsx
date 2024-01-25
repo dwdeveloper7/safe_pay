@@ -39,8 +39,6 @@ const styles = StyleSheet.create({
 
 const HomePage: React.FC = () => (
     <View style={styles.container}>
-        {/* <SignupForm /> */}
-        {/* <VerifyCode /> */}
         <Text>Hi</Text>
     </View>
 );

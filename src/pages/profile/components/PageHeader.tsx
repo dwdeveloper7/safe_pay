@@ -9,9 +9,11 @@ import {
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome5';
 
+import { AddPaymentMethod } from './AddPaymentMethod';
+
 import useAuthStore from '../../../stores/useAuthStore';
 
-const PageHeader = () => {
+const PageHeader = ({ children }) => {
     const { session } = useAuthStore();
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -40,7 +42,7 @@ const PageHeader = () => {
                         <View style={styles.headerProfileBody}>
                             <Text style={styles.headerTitle}>John Doe</Text>
                             <Text style={styles.headerHandle}>
-                                {session.user.phone}
+                                {/* {session.user.phone} */}
                             </Text>
                         </View>
                     </Pressable>
@@ -69,6 +71,7 @@ const PageHeader = () => {
                 <View style={styles.placeholder}>
                     <View style={styles.placeholderInset}>
                         {/* Replace with your content */}
+                        {children}
                     </View>
                 </View>
             </View>

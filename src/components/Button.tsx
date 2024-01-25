@@ -1,4 +1,40 @@
+import React from 'react';
 import { StyleSheet, View, SafeAreaView, Pressable, Text } from 'react-native';
+
+type ButtonSize = 'small' | 'medium' | 'large';
+
+type ButtonProps = {
+    size: ButtonSize;
+    title: string;
+    onPress: () => void;
+};
+const Button: React.FC<ButtonProps> = ({ size, title, onPress }) => {
+    const getButtonStyle = () => {
+        switch (size) {
+            case 'small':
+                return styles.btnSM;
+            case 'medium':
+                return styles.btnMD;
+            case 'large':
+                return styles.btnLG;
+            default:
+                return styles.btnXS;
+        }
+    };
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.buttons}>
+                <Pressable onPress={onPress}>
+                    <View style={getButtonStyle()}>
+                        <Text style={styles.btnText}>{title}</Text>
+                    </View>
+                </Pressable>
+                {/* Additional buttons if needed */}
+            </View>
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -8,9 +44,14 @@ const styles = StyleSheet.create({
         flexBasis: 0,
     },
     buttons: {
-        height: 300,
+        height: 200,
         alignItems: 'center',
         justifyContent: 'space-between',
+    },
+    btnText: {
+        // common text styles for all buttons
+        color: '#fff',
+        fontWeight: '600',
     },
     btnXS: {
         flexDirection: 'row',
@@ -20,14 +61,14 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         paddingHorizontal: 14,
         borderWidth: 1,
-        backgroundColor: '#efefef',
-        borderColor: '#efefef',
+        backgroundColor: '#0569FF',
+        borderColor: '#0569FF',
     },
     btnXSText: {
         fontSize: 13,
         lineHeight: 18,
         fontWeight: '600',
-        color: '#0d57b2',
+        color: '#fff',
     },
     btnSM: {
         flexDirection: 'row',
@@ -37,14 +78,14 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderWidth: 1,
-        backgroundColor: '#efefef',
-        borderColor: '#efefef',
+        backgroundColor: '#0569FF',
+        borderColor: '#0569FF',
     },
     btnSMText: {
         fontSize: 14,
         lineHeight: 20,
         fontWeight: '600',
-        color: '#0d57b2',
+        color: '#fff',
     },
     btnMD: {
         flexDirection: 'row',
@@ -54,14 +95,14 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderWidth: 1,
-        backgroundColor: '#efefef',
-        borderColor: '#efefef',
+        backgroundColor: '#0569FF',
+        borderColor: '#0569FF',
     },
     btnMDText: {
         fontSize: 17,
         lineHeight: 24,
         fontWeight: '600',
-        color: '#0d57b2',
+        color: '#fff',
     },
     btnLG: {
         flexDirection: 'row',
@@ -71,14 +112,14 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderWidth: 1,
-        backgroundColor: '#efefef',
-        borderColor: '#efefef',
+        backgroundColor: '#0569FF',
+        borderColor: '#0569FF',
     },
     btnLGText: {
         fontSize: 18,
         lineHeight: 26,
         fontWeight: '600',
-        color: '#0d57b2',
+        color: '#fff',
     },
     btnXL: {
         flexDirection: 'row',
@@ -88,42 +129,15 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         paddingHorizontal: 24,
         borderWidth: 1,
-        backgroundColor: '#efefef',
-        borderColor: '#efefef',
+        backgroundColor: '#0569FF',
+        borderColor: '#0569FF',
     },
     btnXLText: {
         fontSize: 20,
         lineHeight: 28,
         fontWeight: '600',
-        color: '#0d57b2',
+        color: '#fff',
     },
-    pressed: { opacity: 0.5 },
 });
-
-const ButtonSizes = {
-    XS: styles.btnXS,
-    SM: styles.btnSM,
-    MD: styles.btnMD,
-    LG: styles.btnLG,
-    XL: styles.btnXL,
-};
-
-type ButtonProps = {
-    onPress: () => void;
-    title: string;
-    size: keyof typeof ButtonSizes;
-};
-
-const Button: React.FC<ButtonProps> = ({ onPress, title, size }) => {
-    const buttonStyle = ButtonSizes[size] || ButtonSizes.MD;
-    return (
-        <Pressable
-            onPress={onPress}
-            style={({ pressed }) => [buttonStyle, pressed && styles.pressed]}
-        >
-            <Text style={styles[`btn${size}Text`]}>{title}</Text>
-        </Pressable>
-    );
-};
 
 export default Button;
