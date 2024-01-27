@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import useLoadingStore from '../../../stores/useLoadingStore';
 import { View, TextInput, Text, Pressable, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import Spinner from '../../../components/spinner';
 import { useForm, Controller } from 'react-hook-form';
+import Button from '../../../components/Button';
 import {
     initiateOtpVerification,
     formatToE164,
 } from '../../../util/supabase/util';
+
+import validate from 'validate.js';
 
 const styles = StyleSheet.create({
     container: {
@@ -26,9 +29,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         elevation: 3,
         alignSelf: 'center',
-        // Other button styles...
     },
     buttonText: { color: 'white', fontSize: 18 },
+    buttonContainer: {
+        // Align children in a row
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        // justifyContent: 'center', // Center children vertically
+        // Add any additional styling for the button container
+    },
 
     headerText: {
         fontSize: 24,
@@ -72,7 +82,22 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: 5,
     },
+    submitText: {
+        color: 'blue',
+    },
+    toggleButton: {
+        padding: 10,
+        backgroundColor: '#007bff',
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 10, // Adds vertical space above and below the button
+    },
+    toggleButtonText: {
+        color: 'white',
+    },
 });
+
 const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     const {
         control,
@@ -83,7 +108,36 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
 
     const [loginError, setLoginError] = useState('');
 
-    const onSubmit = async (loginData: { phone: string }) => {
+    const [isPhoneLogin, setIsPhoneLogin] = useState(true);
+
+    const constraints = {
+        email: {
+            presence: { allowEmpty: false, message: 'Email is required' },
+            email: { message: 'Invalid email address' },
+        },
+        phone: {
+            presence: {
+                allowEmpty: false,
+                message: 'Phone number is required',
+            },
+            format: {
+                pattern: '[0-9]+',
+                flags: 'i',
+                message: 'can only contain numbers',
+            },
+            length: {
+                minimum: 10,
+                maximum: 15,
+                message: 'must be 10 to 15 digits',
+            },
+        },
+    };
+
+    const determineLoginText = () => {
+        return isPhoneLogin ? ' Email Login' : ' Phone Login';
+    };
+
+    const onSubmit = async (loginData: { phone?: string; email?: string }) => {
         const { phone } = loginData;
         const formattedNumber = formatToE164(1, phone);
 
@@ -98,18 +152,54 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         }
     };
 
+    const toggleLoginMethod = () => {
+        setIsPhoneLogin(!isPhoneLogin);
+    };
+
     // if (isLoading) return <Spinner />;
 
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
+                {/* Toggle Login Method Button */}
+                <Pressable
+                    onPress={toggleLoginMethod}
+                    style={styles.toggleButton}
+                >
+                    <Text style={styles.toggleButtonText}>
+                        Switch to {determineLoginText()}
+                    </Text>
+                </Pressable>
+
                 {/* Email/Phone Input Field */}
                 <View style={styles.inputContainer}>
-                    <Feather name="mail" size={20} style={styles.icon} />
+                    <Feather
+                        name={isPhoneLogin ? 'phone' : 'mail'}
+                        size={20}
+                        style={styles.icon}
+                    />
                     <Controller
                         control={control}
                         rules={{
-                            required: 'Contact information is required',
+                            validate: async value => {
+                                const validationErrors = validate(
+                                    {
+                                        [isPhoneLogin ? 'phone' : 'email']:
+                                            value,
+                                    },
+                                    {
+                                        [isPhoneLogin ? 'phone' : 'email']:
+                                            constraints[
+                                                isPhoneLogin ? 'phone' : 'email'
+                                            ],
+                                    }
+                                );
+                                return validationErrors === undefined
+                                    ? true
+                                    : validationErrors[
+                                          isPhoneLogin ? 'phone' : 'email'
+                                      ][0];
+                            },
                         }}
                         render={({ field: { onChange, onBlur, value } }) => (
                             <TextInput
@@ -117,39 +207,52 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
                                 onBlur={onBlur}
                                 onChangeText={onChange}
                                 value={value}
-                                placeholder="Email or Phone"
-                                keyboardType="email-address"
-                                accessibilityLabel="Contact Information"
+                                placeholder={
+                                    isPhoneLogin
+                                        ? 'Phone Number'
+                                        : 'Email Address'
+                                }
+                                keyboardType={
+                                    isPhoneLogin ? 'phone-pad' : 'email-address'
+                                }
+                                accessibilityLabel={
+                                    isPhoneLogin
+                                        ? 'Phone Number'
+                                        : 'Email Address'
+                                }
                             />
                         )}
-                        name="phone"
-                        defaultValue="555-555-5555"
+                        name="contact"
+                        defaultValue=""
                     />
                 </View>
-                {errors.phone && (
+                {errors.contact && (
                     <Text style={styles.errorText}>
-                        Enter a valid email or phone number.
+                        {`${errors.contact.message}`}
                     </Text>
                 )}
-
-                {loginError !== '' && (
-                    <Text style={styles.errorText}>{loginError}</Text>
-                )}
-
-                {/* Login Button */}
-                <Pressable
-                    onPress={handleSubmit(onSubmit)}
-                    style={({ pressed }) => [
-                        styles.button,
-                        {
-                            backgroundColor: pressed ? '#0056b3' : '#007bff',
-                        },
-                    ]}
-                    accessibilityLabel="Login"
-                    accessibilityHint="Login to your account"
-                >
-                    <Text style={styles.buttonText}>Login</Text>
-                </Pressable>
+                <View>
+                    <Text>
+                        Lorem ipsum dolor sit amet consectetur, adipisicing
+                        elit. Ad suscipit aspernatur deleniti, tenetur,
+                        repudiandae perferendis aliquam similique, praesentium
+                        hic distinctio enim asperiores tempora sint? Totam in
+                        similique sint excepturi aspernatur.
+                    </Text>
+                </View>
+                <View>
+                    <Pressable
+                        onPress={handleSubmit(onSubmit)}
+                        style={styles.buttonContainer}
+                    >
+                        <Text style={styles.submitText}>Next </Text>
+                        <MaterialIcons
+                            name="navigate-next"
+                            size={34}
+                            color="blue"
+                        />
+                    </Pressable>
+                </View>
             </View>
         </View>
     );

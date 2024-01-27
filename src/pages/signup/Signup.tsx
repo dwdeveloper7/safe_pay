@@ -1,25 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Pressable } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import { useForm, Controller } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
 import { useMutation } from '@tanstack/react-query';
+import validate from 'validate.js';
 
 import initiateOtpVerification from './auth';
 
-const validateContact = value => {
-    // Regular expression to match email pattern
-    const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
-    // Regular expression to match phone pattern (very basic validation, you may need a more robust regex)
-    const phonePattern =
-        /^\+?([0-9]{1,3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4,5})$/;
-
-    const dobPattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(19|20)\d{2}$/;
-
-    return (
-        emailPattern.test(value) ||
-        phonePattern.test(value) ||
-        dobPattern.test(value)
-    );
+const constraints = {
+    name: {
+        presence: { allowEmpty: false, message: 'Name is required' },
+        // Additional validation rules if needed
+    },
+    dateOfBirth: {
+        presence: { allowEmpty: false, message: 'Date of birth is required' },
+        format: {
+            pattern: /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(19|20)\d{2}$/,
+            message: 'Invalid date format (MM/DD/YYYY)',
+        },
+        // Additional date logic validation can be added here
+    },
+    address: {
+        presence: { allowEmpty: false, message: 'Address is required' },
+        // Additional validation rules if needed
+    },
+    ssn: {
+        presence: {
+            allowEmpty: false,
+            message: 'Last 4 digits of SSN is required',
+        },
+        length: { is: 4, message: 'Must be exactly 4 digits' },
+        numericality: { onlyInteger: true, message: 'Must be a number' },
+    },
+    tosAccepted: {
+        inclusion: {
+            within: [true],
+            message: 'You must accept the terms of service',
+        },
+    },
 };
 
 const styles = StyleSheet.create({
@@ -41,6 +60,25 @@ const styles = StyleSheet.create({
         // Other button styles...
     },
     buttonText: { color: 'white', fontSize: 18 },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    checkbox: {
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#333',
+        marginRight: 8,
+    },
+    checkboxChecked: {
+        backgroundColor: '#007bff',
+    },
+    checkboxCheckmark: {
+        color: 'white',
+    },
 
     headerText: {
         fontSize: 24,
@@ -117,137 +155,146 @@ function SignupForm() {
         formState: { errors },
     } = useForm();
 
-    function formatToE164(countryCode, phoneNumber) {
-        const strippedNumber = phoneNumber.replace(/[^\d]/g, '');
-        return `+${countryCode}${strippedNumber}`;
-    }
+    const [tosAccepted, setTosAccepted] = useState(false);
 
-    const onSubmit = newUserData => {
-        try {
-            // Calling the mutate function with new user data
-            mutation.mutate(newUserData, {
-                onSuccess: data => {
-                    const formattedNumber = formatToE164(1, newUserData.phone);
-
-                    // Handle the success scenario
-                    // initiateOtpVerification(formattedNumber);
-                    console.log('User created successfully', data);
-                },
-                onError: error => {
-                    // Handle the error scenario
-                    console.error('Error creating user', error);
-                },
-            });
-        } catch (error) {
-            console.error('Submission error', error);
-        }
+    const onSubmit = formData => {
+        mutation;
     };
 
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
-                {/* Contact Field */}
-                <View style={styles.inputContainer}>
-                    <Feather name="mail" size={20} style={styles.icon} />
-                    <Controller
-                        control={control}
-                        rules={{
-                            required: 'Contact information is required',
-                            validate: validateContact,
-                        }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="Email or Phone"
-                                keyboardType="email-address"
-                                accessibilityLabel="Contact Information"
-                            />
-                        )}
-                        name="phone"
-                        defaultValue="555-555-5555"
-                    />
-                </View>
-                {errors.contact && (
-                    <Text style={styles.errorText}>
-                        Enter a valid email or phone number.
-                    </Text>
-                )}
-
-                {/* Zipcode Field */}
-                <View style={styles.inputContainer}>
-                    <Feather name="map-pin" size={20} style={styles.icon} />
-                    <Controller
-                        control={control}
-                        rules={{
-                            required: 'Zipcode is required',
-                            minLength: {
-                                value: 5,
-                                message: 'Zipcode must be at least 5 digits',
-                            },
-                            maxLength: {
-                                value: 9,
-                                message: 'Zipcode must be less than 10 digits',
-                            },
-                        }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="Zipcode"
-                                keyboardType="numeric"
-                                accessibilityLabel="Zipcode"
-                            />
-                        )}
-                        name="zipcode"
-                        defaultValue="55403"
-                    />
-                </View>
-                {errors.zipcode && (
-                    <Text style={styles.errorText}>
-                        {errors.zipcode.message}
-                    </Text>
-                )}
-
-                <View style={styles.inputContainer}>
-                    <Feather name="calendar" size={20} style={styles.icon} />
-                    <Controller
-                        control={control}
-                        rules={{
-                            required: 'Date of birth is required',
-                            pattern: {
-                                // This pattern matches dates in MM/DD/YYYY format
-                                value: /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/(19|20)\d{2}$/,
-                                message: 'MM/DD/YYYY format',
-                            },
-                            validate: {
-                                // Additional validation to check for logical date consistency can be added here
-                            },
-                        }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="MM/DD/YYYY"
-                                keyboardType="numeric"
-                                accessibilityLabel="Date of Birth"
-                            />
-                        )}
-                        name="dateOfBirth"
-                        defaultValue="01/01/1993"
-                    />
-                    {errors.dateOfBirth && (
-                        <Text style={styles.errorText}>
-                            {errors.dateOfBirth.message}
-                        </Text>
+                {/* Name Field */}
+                <Controller
+                    name="name"
+                    control={control}
+                    rules={{
+                        validate: value =>
+                            validate(
+                                { name: value },
+                                { name: constraints.name }
+                            ),
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Name"
+                            accessibilityLabel="Name"
+                        />
                     )}
+                    defaultValue=""
+                />
+                {errors.name && (
+                    <Text
+                        style={styles.errorText}
+                    >{`${errors.name.message}`}</Text>
+                )}
+
+                {/* Date of Birth Field */}
+                <Controller
+                    name="dateOfBirth"
+                    control={control}
+                    rules={{
+                        validate: value =>
+                            validate(
+                                { dateOfBirth: value },
+                                { dateOfBirth: constraints.dateOfBirth }
+                            ),
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="MM/DD/YYYY"
+                            keyboardType="numeric"
+                            accessibilityLabel="Date of Birth"
+                        />
+                    )}
+                    defaultValue=""
+                />
+                {errors.dateOfBirth && (
+                    <Text style={styles.errorText}>
+                        {`${errors.dateOfBirth.message}`}
+                    </Text>
+                )}
+
+                {/* Address Field */}
+                <Controller
+                    name="address"
+                    control={control}
+                    rules={{
+                        validate: value =>
+                            validate(
+                                { address: value },
+                                { address: constraints.address }
+                            ),
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Address"
+                            accessibilityLabel="Address"
+                        />
+                    )}
+                    defaultValue=""
+                />
+                {errors.address && (
+                    <Text style={styles.errorText}>
+                        {`${errors.address.message}`}
+                    </Text>
+                )}
+
+                {/* SSN Field */}
+                <Controller
+                    name="ssn"
+                    control={control}
+                    rules={{
+                        validate: value =>
+                            validate({ ssn: value }, { ssn: constraints.ssn }),
+                    }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Last 4 digits of SSN"
+                            keyboardType="numeric"
+                            accessibilityLabel="Last Four SSN"
+                        />
+                    )}
+                    defaultValue=""
+                />
+                {errors.ssn && (
+                    <Text
+                        style={styles.errorText}
+                    >{`${errors.ssn.message}`}</Text>
+                )}
+
+                {/* TOS Checkbox */}
+                <View style={styles.checkboxContainer}>
+                    <CheckBox
+                        value={tosAccepted}
+                        onValueChange={setTosAccepted}
+                        accessibilityLabel="Accept Terms of Service"
+                    />
+                    <Text style={styles.label}>
+                        I accept the Terms of Service
+                    </Text>
                 </View>
+                {errors.tosAccepted && (
+                    <Text style={styles.errorText}>
+                        {`${errors.tosAccepted.message}`}
+                    </Text>
+                )}
 
                 {/* Submit Button */}
                 <Pressable
@@ -259,7 +306,7 @@ function SignupForm() {
                     accessibilityLabel="Register"
                     accessibilityHint="Register for a new account"
                 >
-                    <Text style={styles.buttonText}>Lets Go</Text>
+                    <Text style={styles.buttonText}>Register</Text>
                 </Pressable>
             </View>
         </View>

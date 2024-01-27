@@ -11,6 +11,7 @@
     "dependencies": {
         "@expo/webpack-config": "^19.0.0",
         "@react-native-async-storage/async-storage": "^1.21.0",
+        "@react-native-community/checkbox": "^0.5.17",
         "@react-native-picker/picker": "2.4.10",
         "@react-navigation/native": "^6.1.9",
         "@react-navigation/stack": "^6.3.20",
@@ -37,6 +38,7 @@
         "react-native-url-polyfill": "^2.0.0",
         "react-native-web": "~0.19.6",
         "typescript": "^5.3.3",
+        "validate.js": "^0.13.1",
         "zustand": "^4.4.7"
     },
     "devDependencies": {
