@@ -6,7 +6,7 @@ type ButtonSize = 'small' | 'medium' | 'large';
 type ButtonProps = {
     size: ButtonSize;
     title: string;
-    onPress: () => void;
+    onPress: (T: any) => void | Promise<void>;
 };
 const Button: React.FC<ButtonProps> = ({ size, title, onPress }) => {
     const getButtonStyle = () => {

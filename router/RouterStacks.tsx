@@ -8,6 +8,7 @@ import { Profile } from '../src/pages/profile';
 import { Transactions } from '../src/pages/transactions';
 import { Login } from '../src/pages/login/index';
 import Auth from '../src/pages/signup/auth';
+import SignupForm from '../src/pages/signup/Signup';
 
 export const routeNames = [
     'Home',
@@ -16,6 +17,7 @@ export const routeNames = [
     'Profile',
     'Transactions',
     'SignIn',
+    'Register',
 ] as const;
 
 export type RootStackParamList = {
@@ -26,6 +28,7 @@ export type RootStackParamList = {
     Profile: undefined;
     Transactions: undefined;
     Login: undefined;
+    Register: undefined;
     // Add other screens and their parameter types as needed
 };
 
@@ -71,6 +74,11 @@ const RouterStacks = () => (
             <Stack.Screen
                 name="Login"
                 component={Auth}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Register"
+                component={SignupForm}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>

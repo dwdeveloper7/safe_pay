@@ -14,3 +14,9 @@ export const appTextStyles = StyleSheet.create({
         fontWeight: 'normal',
     },
 });
+
+export const ButtonStyles = StyleSheet.create({
+    buttonDisabled: {
+        opacity: 0.5,
+    },
+});

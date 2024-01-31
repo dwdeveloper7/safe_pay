@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, Pressable } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
+import {
+    View,
+    TextInput,
+    Text,
+    StyleSheet,
+    Pressable,
+    Modal,
+} from 'react-native';
+import CheckBox from 'expo-checkbox';
 import { useForm, Controller } from 'react-hook-form';
 import { Feather } from '@expo/vector-icons';
 import { useMutation } from '@tanstack/react-query';
 import validate from 'validate.js';
+import RegistrationForm from './components/RegistrationForm';
 
 import initiateOtpVerification from './auth';
 
@@ -87,7 +95,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     formContainer: {
-        width: '100%',
+        flex: 1,
         maxWidth: 400,
         padding: 20,
         borderRadius: 10,
@@ -161,156 +169,157 @@ function SignupForm() {
         mutation;
     };
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.formContainer}>
-                {/* Name Field */}
-                <Controller
-                    name="name"
-                    control={control}
-                    rules={{
-                        validate: value =>
-                            validate(
-                                { name: value },
-                                { name: constraints.name }
-                            ),
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                            style={styles.input}
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            value={value}
-                            placeholder="Name"
-                            accessibilityLabel="Name"
-                        />
-                    )}
-                    defaultValue=""
-                />
-                {errors.name && (
-                    <Text
-                        style={styles.errorText}
-                    >{`${errors.name.message}`}</Text>
-                )}
+    // return (
+    //     <Modal style={styles.container}>
+    //         <View style={styles.formContainer}>
+    //             {/* Name Field */}
+    //             <Controller
+    //                 name="name"
+    //                 control={control}
+    //                 rules={{
+    //                     validate: value =>
+    //                         validate(
+    //                             { name: value },
+    //                             { name: constraints.name }
+    //                         ),
+    //                 }}
+    //                 render={({ field: { onChange, onBlur, value } }) => (
+    //                     <TextInput
+    //                         style={styles.input}
+    //                         onBlur={onBlur}
+    //                         onChangeText={onChange}
+    //                         value={value}
+    //                         placeholder="Name"
+    //                         accessibilityLabel="Name"
+    //                     />
+    //                 )}
+    //                 defaultValue=""
+    //             />
+    //             {errors.name && (
+    //                 <Text
+    //                     style={styles.errorText}
+    //                 >{`${errors.name.message}`}</Text>
+    //             )}
 
-                {/* Date of Birth Field */}
-                <Controller
-                    name="dateOfBirth"
-                    control={control}
-                    rules={{
-                        validate: value =>
-                            validate(
-                                { dateOfBirth: value },
-                                { dateOfBirth: constraints.dateOfBirth }
-                            ),
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                            style={styles.input}
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            value={value}
-                            placeholder="MM/DD/YYYY"
-                            keyboardType="numeric"
-                            accessibilityLabel="Date of Birth"
-                        />
-                    )}
-                    defaultValue=""
-                />
-                {errors.dateOfBirth && (
-                    <Text style={styles.errorText}>
-                        {`${errors.dateOfBirth.message}`}
-                    </Text>
-                )}
+    //             {/* Date of Birth Field */}
+    //             <Controller
+    //                 name="dateOfBirth"
+    //                 control={control}
+    //                 rules={{
+    //                     validate: value =>
+    //                         validate(
+    //                             { dateOfBirth: value },
+    //                             { dateOfBirth: constraints.dateOfBirth }
+    //                         ),
+    //                 }}
+    //                 render={({ field: { onChange, onBlur, value } }) => (
+    //                     <TextInput
+    //                         style={styles.input}
+    //                         onBlur={onBlur}
+    //                         onChangeText={onChange}
+    //                         value={value}
+    //                         placeholder="MM/DD/YYYY"
+    //                         keyboardType="numeric"
+    //                         accessibilityLabel="Date of Birth"
+    //                     />
+    //                 )}
+    //                 defaultValue=""
+    //             />
+    //             {errors.dateOfBirth && (
+    //                 <Text style={styles.errorText}>
+    //                     {`${errors.dateOfBirth.message}`}
+    //                 </Text>
+    //             )}
 
-                {/* Address Field */}
-                <Controller
-                    name="address"
-                    control={control}
-                    rules={{
-                        validate: value =>
-                            validate(
-                                { address: value },
-                                { address: constraints.address }
-                            ),
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                            style={styles.input}
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            value={value}
-                            placeholder="Address"
-                            accessibilityLabel="Address"
-                        />
-                    )}
-                    defaultValue=""
-                />
-                {errors.address && (
-                    <Text style={styles.errorText}>
-                        {`${errors.address.message}`}
-                    </Text>
-                )}
+    //             {/* Address Field */}
+    //             <Controller
+    //                 name="address"
+    //                 control={control}
+    //                 rules={{
+    //                     validate: value =>
+    //                         validate(
+    //                             { address: value },
+    //                             { address: constraints.address }
+    //                         ),
+    //                 }}
+    //                 render={({ field: { onChange, onBlur, value } }) => (
+    //                     <TextInput
+    //                         style={styles.input}
+    //                         onBlur={onBlur}
+    //                         onChangeText={onChange}
+    //                         value={value}
+    //                         placeholder="Address"
+    //                         accessibilityLabel="Address"
+    //                     />
+    //                 )}
+    //                 defaultValue=""
+    //             />
+    //             {errors.address && (
+    //                 <Text style={styles.errorText}>
+    //                     {`${errors.address.message}`}
+    //                 </Text>
+    //             )}
 
-                {/* SSN Field */}
-                <Controller
-                    name="ssn"
-                    control={control}
-                    rules={{
-                        validate: value =>
-                            validate({ ssn: value }, { ssn: constraints.ssn }),
-                    }}
-                    render={({ field: { onChange, onBlur, value } }) => (
-                        <TextInput
-                            style={styles.input}
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            value={value}
-                            placeholder="Last 4 digits of SSN"
-                            keyboardType="numeric"
-                            accessibilityLabel="Last Four SSN"
-                        />
-                    )}
-                    defaultValue=""
-                />
-                {errors.ssn && (
-                    <Text
-                        style={styles.errorText}
-                    >{`${errors.ssn.message}`}</Text>
-                )}
+    //             {/* SSN Field */}
+    //             <Controller
+    //                 name="ssn"
+    //                 control={control}
+    //                 rules={{
+    //                     validate: value =>
+    //                         validate({ ssn: value }, { ssn: constraints.ssn }),
+    //                 }}
+    //                 render={({ field: { onChange, onBlur, value } }) => (
+    //                     <TextInput
+    //                         style={styles.input}
+    //                         onBlur={onBlur}
+    //                         onChangeText={onChange}
+    //                         value={value}
+    //                         placeholder="Last 4 digits of SSN"
+    //                         keyboardType="numeric"
+    //                         accessibilityLabel="Last Four SSN"
+    //                     />
+    //                 )}
+    //                 defaultValue=""
+    //             />
+    //             {errors.ssn && (
+    //                 <Text
+    //                     style={styles.errorText}
+    //                 >{`${errors.ssn.message}`}</Text>
+    //             )}
 
-                {/* TOS Checkbox */}
-                <View style={styles.checkboxContainer}>
-                    <CheckBox
-                        value={tosAccepted}
-                        onValueChange={setTosAccepted}
-                        accessibilityLabel="Accept Terms of Service"
-                    />
-                    <Text style={styles.label}>
-                        I accept the Terms of Service
-                    </Text>
-                </View>
-                {errors.tosAccepted && (
-                    <Text style={styles.errorText}>
-                        {`${errors.tosAccepted.message}`}
-                    </Text>
-                )}
+    //             {/* TOS Checkbox */}
+    //             <View style={styles.checkboxContainer}>
+    //                 <CheckBox
+    //                     value={tosAccepted}
+    //                     onValueChange={setTosAccepted}
+    //                     accessibilityLabel="Accept Terms of Service"
+    //                 />
+    //                 <Text style={styles.label}>
+    //                     I accept the Terms of Service
+    //                 </Text>
+    //             </View>
+    //             {errors.tosAccepted && (
+    //                 <Text style={styles.errorText}>
+    //                     {`${errors.tosAccepted.message}`}
+    //                 </Text>
+    //             )}
 
-                {/* Submit Button */}
-                <Pressable
-                    onPress={handleSubmit(onSubmit)}
-                    style={({ pressed }) => [
-                        styles.button,
-                        { backgroundColor: pressed ? '#0056b3' : '#007bff' },
-                    ]}
-                    accessibilityLabel="Register"
-                    accessibilityHint="Register for a new account"
-                >
-                    <Text style={styles.buttonText}>Register</Text>
-                </Pressable>
-            </View>
-        </View>
-    );
+    //             {/* Submit Button */}
+    //             <Pressable
+    //                 onPress={handleSubmit(onSubmit)}
+    //                 style={({ pressed }) => [
+    //                     styles.button,
+    //                     { backgroundColor: pressed ? '#0056b3' : '#007bff' },
+    //                 ]}
+    //                 accessibilityLabel="Register"
+    //                 accessibilityHint="Register for a new account"
+    //             >
+    //                 <Text style={styles.buttonText}>Register</Text>
+    //             </Pressable>
+    //         </View>
+    //     </Modal>
+    // );
+    return <RegistrationForm />;
 }
 
 export default SignupForm;

@@ -36,8 +36,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
+        color: 'blue',
         // justifyContent: 'center', // Center children vertically
         // Add any additional styling for the button container
+    },
+    buttonDisabled: {
+        // Styles for the disabled state
+        opacity: 0.5, // Example style
+        color: 'gray',
     },
 
     headerText: {
@@ -98,7 +104,7 @@ const styles = StyleSheet.create({
     },
 });
 
-const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
+const Login: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     const {
         control,
         handleSubmit,
@@ -137,13 +143,24 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         return isPhoneLogin ? ' Email Login' : ' Phone Login';
     };
 
-    const onSubmit = async (loginData: { phone?: string; email?: string }) => {
-        const { phone } = loginData;
-        const formattedNumber = formatToE164(1, phone);
+    const onSubmit = async (loginData: { contact: string }) => {
+        if (hasErrors) {
+            return;
+        }
+        const { contact } = loginData;
+        let loginField: { phone: string } | { email: string };
+
+        if (isPhoneLogin) {
+            loginField = { phone: formatToE164(1, contact) };
+        } else {
+            loginField = { email: contact };
+        }
 
         try {
             setLoading(true);
-            await initiateOtpVerification(formattedNumber);
+            await initiateOtpVerification(loginField);
+
+            // await login or create
             setLoading(false);
             onSuccess();
         } catch (error) {
@@ -156,12 +173,13 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
         setIsPhoneLogin(!isPhoneLogin);
     };
 
-    // if (isLoading) return <Spinner />;
+    const hasErrors = Object.keys(errors).length > 0;
+
+    if (isLoading) return <Spinner />;
 
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
-                {/* Toggle Login Method Button */}
                 <Pressable
                     onPress={toggleLoginMethod}
                     style={styles.toggleButton}
@@ -231,6 +249,10 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
                         {`${errors.contact.message}`}
                     </Text>
                 )}
+
+                {loginError && (
+                    <Text style={styles.errorText}>{`${loginError}`}</Text>
+                )}
                 <View>
                     <Text>
                         Lorem ipsum dolor sit amet consectetur, adipisicing
@@ -243,13 +265,17 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
                 <View>
                     <Pressable
                         onPress={handleSubmit(onSubmit)}
-                        style={styles.buttonContainer}
+                        style={({ pressed }) => [
+                            styles.buttonContainer,
+                            hasErrors ? styles.buttonDisabled : null,
+                            {},
+                        ]}
                     >
                         <Text style={styles.submitText}>Next </Text>
                         <MaterialIcons
                             name="navigate-next"
                             size={34}
-                            color="blue"
+                            color={hasErrors ? 'gray' : 'blue'}
                         />
                     </Pressable>
                 </View>
@@ -258,4 +284,4 @@ const LoginComponent: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
     );
 };
 
-export default LoginComponent;
+export default Login;

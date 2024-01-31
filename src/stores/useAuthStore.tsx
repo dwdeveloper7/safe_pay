@@ -8,7 +8,10 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>(set => ({
     session: null,
-    setSession: session => set({ session }),
+    setSession: session => {
+        console.log('SESSION', session);
+        return set({ session });
+    },
 }));
 
 export default useAuthStore;

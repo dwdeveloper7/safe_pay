@@ -3,8 +3,13 @@ import { View, TextInput, StyleSheet, Pressable, Text } from 'react-native';
 import Spinner from '../../components/spinner';
 import { useNavigation } from '@react-navigation/native';
 import useLoadingStore from '../../stores/useLoadingStore';
+import useAuthStore from '../../stores/useAuthStore';
+import Button from '../../components/Button';
+
+import { useQuery } from '@tanstack/react-query';
 
 import supabase from '../../../lib/supabase';
+import { resendPhoneOtp } from '../../util/supabase/util';
 
 type VerifyCodeProps = {
     onCodeFilled: (code: string) => void;
@@ -17,6 +22,17 @@ function formatToE164(countryCode, phoneNumber) {
     return `+${countryCode}${strippedNumber}`;
 }
 
+const apiPath = 'http://192.168.0.187:8080/api/v1/users';
+
+const checkUserExists = async uuid => {
+    const response = await fetch(`${apiPath}/${uuid}/exists`);
+    if (response.status === 500) {
+        throw new Error('Network response was not ok');
+    }
+
+    return response.json();
+};
+const route = '/api/v1/users/:id/exists';
 //
 
 export const VerifyOTPCode: React.FC<VerifyCodeProps> = ({ onCodeFilled }) => {
@@ -27,7 +43,33 @@ export const VerifyOTPCode: React.FC<VerifyCodeProps> = ({ onCodeFilled }) => {
 
     const { isLoading, setLoading } = useLoadingStore();
 
+    const { session } = useAuthStore();
+
+    const userUuid = session?.user.id;
+
+    const {
+        data,
+        isLoading: isFetchLoading,
+        error: fetchError,
+    } = useQuery({
+        queryKey: ['checkUser'],
+        queryFn: () => checkUserExists(userUuid),
+        enabled: !!userUuid,
+    });
+
     const navigation = useNavigation();
+
+    if (session && !isFetchLoading) {
+        console.log('DATA', data);
+        if (data && !data.data.exists) {
+            console.log('DATA HERE FOLKS', data);
+            // Logic when user does not exist, e.g., navigate to registration
+            navigation.navigate('Register');
+        } else {
+            // Logic when user exists
+            navigation.navigate('Transactions');
+        }
+    }
 
     const inputRefs = useRef<React.RefObject<TextInput>[]>(
         new Array(OTP_LENGTH).fill(null).map(() => React.createRef<TextInput>())
@@ -79,11 +121,11 @@ export const VerifyOTPCode: React.FC<VerifyCodeProps> = ({ onCodeFilled }) => {
             });
 
             if (error) throw error;
+            // ADD fetch call to back end, if user doesnt exist navigate to signup|
 
-            navigation.navigate('Transactions');
             setLoading(false);
         } catch (error) {
-            console.error(error);
+            setError(error);
             setLoading(false);
         }
     };
@@ -116,6 +158,18 @@ export const VerifyOTPCode: React.FC<VerifyCodeProps> = ({ onCodeFilled }) => {
                     />
                 ))}
             </View>
+            {error && (
+                <Text
+                    style={{ color: 'red', marginBottom: 8 }}
+                >{`${error}`}</Text>
+            )}
+            {error && (
+                <Button
+                    title="Resend code"
+                    onPress={phone => resendPhoneOtp(phone)}
+                    size="small"
+                />
+            )}
             <Pressable
                 style={({ pressed }) => [
                     styles.button,
@@ -161,7 +215,7 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     inputFocused: {
-        outlineColor: 'blue',
+        // outlineColor: 'blue',
         borderColor: 'blue', // Or any other color
         borderWidth: 2, // Adjust the border width as needed
     },
