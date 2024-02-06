@@ -37,12 +37,12 @@ const Button: React.FC<ButtonProps> = ({ size, title, onPress }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 24,
-        flexGrow: 1,
-        flexShrink: 1,
-        flexBasis: 0,
-    },
+    // container: {
+    //     padding: 24,
+    //     flexGrow: 1,
+    //     flexShrink: 1,
+    //     flexBasis: 0,
+    // },
     buttons: {
         height: 200,
         alignItems: 'center',

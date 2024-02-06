@@ -9,6 +9,10 @@ import {
     StyleSheet,
 } from 'react-native';
 
+import useAuthStore from '../../../stores/useAuthStore';
+
+import Button from '../../../components/Button';
+
 import { DateOfBirthStep, UserNameStep } from './Steps';
 
 const styles = StyleSheet.create({
@@ -21,6 +25,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         backgroundColor: '#f0f0f7',
+        borderColor: 'red',
+        borderWidth: 4,
     },
 });
 
@@ -30,12 +36,16 @@ enum RegistrationStep {
 }
 
 const RegistrationForm = () => {
+    const { session } = useAuthStore();
+
     const {
         control,
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState<RegistrationStep>(
+        RegistrationStep.EnterUsername
+    );
     const totalSteps = 2;
 
     const goToNextStep = () => {
@@ -44,31 +54,34 @@ const RegistrationForm = () => {
         }
     };
 
+    const generateRegisterUserPayload = formData => {
+        const id = session.user.id;
+
+        return JSON.stringify({ id, ...formData });
+    };
+
     const onSubmit = data => {
-        console.log(data); // Handle form submission
+        const registerUserPayload = generateRegisterUserPayload(data);
     };
 
     return (
         <Modal style={styles.container}>
             <View style={styles.formContainer}>
-                {currentStep === 1 && (
+                {currentStep === RegistrationStep.EnterUsername && (
                     <UserNameStep control={control} errors={errors} />
                 )}
-                {currentStep === 2 && (
+                {currentStep === RegistrationStep.EnterDateOfBirth && (
                     <DateOfBirthStep control={control} errors={errors} />
                 )}
 
                 {currentStep < totalSteps ? (
-                    <Pressable onPress={goToNextStep} style={styles.button}>
-                        <Text style={styles.buttonText}>Next</Text>
-                    </Pressable>
+                    <Button onPress={goToNextStep} title="Next" size="medium" />
                 ) : (
-                    <Pressable
+                    <Button
+                        title="Finish"
                         onPress={handleSubmit(onSubmit)}
-                        style={styles.button}
-                    >
-                        <Text style={styles.buttonText}>Submit</Text>
-                    </Pressable>
+                        size="medium"
+                    />
                 )}
             </View>
         </Modal>
