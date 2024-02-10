@@ -44,7 +44,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 const RouterStacks = () => (
     <>
-        <Stack.Navigator initialRouteName="Register">
+        <Stack.Navigator>
             <Stack.Screen
                 name="Home"
                 component={HomePage}

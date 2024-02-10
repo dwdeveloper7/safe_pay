@@ -24,7 +24,7 @@ function formatToE164(countryCode, phoneNumber) {
 
 const apiPath = 'http://192.168.0.187:8080/api/v1/users';
 
-const checkUserExists = async uuid => {
+export const checkUserExists = async uuid => {
     const response = await fetch(`${apiPath}/${uuid}/exists`);
     if (response.status === 500) {
         throw new Error('Network response was not ok');
@@ -60,9 +60,7 @@ export const VerifyOTPCode: React.FC<VerifyCodeProps> = ({ onCodeFilled }) => {
     const navigation = useNavigation();
 
     if (session && !isFetchLoading) {
-        console.log('DATA', data);
         if (data && !data.data.exists) {
-            console.log('DATA HERE FOLKS', data);
             // Logic when user does not exist, e.g., navigate to registration
             navigation.navigate('Register');
         } else {

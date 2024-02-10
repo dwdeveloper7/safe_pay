@@ -5,7 +5,14 @@ import { RootStackParamList } from './RouterStacks';
 import useActivePageStore from '../src/stores/useActivePageStore';
 import useAuthStore from '../src/stores/useAuthStore';
 import useLoadingStore from '../src/stores/useLoadingStore';
+import useCheckUserRegistration from './hooks/useCheckUserRegistration';
 import supabase from '../lib/supabase';
+
+import Spinner from '../src/components/spinner';
+import {
+    setIsRegisteredFlag,
+    getIsRegisteredFlag,
+} from '../src/util/storageUtils';
 
 type SignInScreenNavigationProp = StackNavigationProp<
     RootStackParamList,
@@ -16,34 +23,45 @@ const AuthCheckWrapper: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
     const navigation = useNavigation<SignInScreenNavigationProp>();
+    const { session, setSession } = useAuthStore();
+    const { isLoading, setLoading } = useLoadingStore();
 
-    const { setSession } = useAuthStore();
+    const {
+        data: isRegistered,
+        isLoading: isLoadingRegistrationCheck,
+        error,
+    } = useCheckUserRegistration();
 
-    const { setLoading } = useLoadingStore();
-
-    useEffect(() => {
+    const checkAuth = async () => {
         setLoading(true);
 
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
+        setSession(session);
+
+        if (!session) {
             setLoading(false);
-            if (!session) {
-                navigation.navigate('Login');
-            }
-        });
+            navigation.navigate('Login');
+        }
+        setLoading(false);
+    };
 
-        const { data: authListener } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setSession(session);
-
-                if (!session) {
-                    navigation.navigate('Login');
-                }
-            }
-        );
-        return () => {
-            authListener.subscription.unsubscribe();
-        };
+    useEffect(() => {
+        checkAuth();
     }, []);
+
+    useEffect(() => {
+        if (!isLoadingRegistrationCheck && !error) {
+            if (!isRegistered) {
+                navigation.navigate('Register');
+            } else {
+                navigation.navigate('Transactions'); // Or another authenticated route
+            }
+        }
+    }, [isRegistered, isLoadingRegistrationCheck, error]);
+
+    if (isLoading || isLoadingRegistrationCheck) return <Spinner />;
 
     return <>{children}</>;
 };

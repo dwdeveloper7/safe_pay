@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import {
-    View,
-    TextInput,
-    Text,
-    Pressable,
-    Modal,
-    StyleSheet,
-} from 'react-native';
+import { useForm } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { View, Modal, StyleSheet } from 'react-native';
 
 import useAuthStore from '../../../stores/useAuthStore';
+
+import { setIsRegisteredFlag } from '../../../util/storageUtils';
 
 import Button from '../../../components/Button';
 
@@ -46,6 +42,7 @@ const RegistrationForm = () => {
     const [currentStep, setCurrentStep] = useState<RegistrationStep>(
         RegistrationStep.EnterUsername
     );
+
     const totalSteps = 2;
 
     const goToNextStep = () => {
@@ -54,14 +51,56 @@ const RegistrationForm = () => {
         }
     };
 
-    const generateRegisterUserPayload = formData => {
+    const generateRegisterUserPayload = (formData: {
+        dateOfBirth: string;
+        username: string;
+    }) => {
         const id = session.user.id;
 
-        return JSON.stringify({ id, ...formData });
+        return { id, ...formData };
     };
+
+    const postUserData = async (payload: {
+        id: string;
+        dateOfBirth: string;
+        username: string;
+    }) => {
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(generateRegisterUserPayload(payload)),
+            });
+
+            return response.json();
+        } catch (error) {
+            throw new Error('Failed to post data');
+        }
+    };
+
+    const mutation = useMutation({
+        mutationFn: postUserData,
+        onSuccess: async data => {
+            try {
+                await setIsRegisteredFlag(true);
+                console.log('Data posted successfully:', data);
+            } catch (error) {
+                console.error('Error setting registered flag:', error);
+            }
+        },
+        onError: error => {
+            // Handle error
+            console.error('Error posting data:', error);
+        },
+    });
+
+    const apiUrl = 'http://192.168.0.187:8080/api/v1/users';
 
     const onSubmit = data => {
         const registerUserPayload = generateRegisterUserPayload(data);
+        mutation.mutate(registerUserPayload);
     };
 
     return (

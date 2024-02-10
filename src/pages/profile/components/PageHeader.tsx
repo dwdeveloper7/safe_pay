@@ -15,6 +15,7 @@ import useAuthStore from '../../../stores/useAuthStore';
 
 const PageHeader = ({ children }) => {
     const { session } = useAuthStore();
+    const id = session?.user.id;
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <View style={styles.container}>
@@ -40,7 +41,7 @@ const PageHeader = ({ children }) => {
                         />
 
                         <View style={styles.headerProfileBody}>
-                            <Text style={styles.headerTitle}>John Doe</Text>
+                            <Text style={styles.headerTitle}>{id}</Text>
                             <Text style={styles.headerHandle}>
                                 {/* {session.user.phone} */}
                             </Text>
