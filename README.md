@@ -2,7 +2,7 @@
 
 ## Overview
 
-Safe Pay is a React Native application designed to facilitate digital payments between two users, with the capability to roll back transactions using the Stripe API. The app leverages the Stripe Manual Pay API for processing payments, TypeScript for type safety, and Zustand for state management.
+Safe Pay is a React Native application designed to facilitate digital payments between two users, with the capability to roll back transactions using the Stripe API. The app leverages the Stripe Manual Pay API for processing payments, TypeScript for type safety, and Zustand for state management. It is intended to increase safety for person-to-person transactions.
 
 ## Features
 
